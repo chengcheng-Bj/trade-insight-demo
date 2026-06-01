@@ -15,4 +15,45 @@
     border-radius: 0.5rem;
   }
   .result-card p { font-size: 0....  
+html
+      <h2 class="text-lg font-semibold mb-3">业务参数</h2>
+      <label class="block mb-2">销售价 (USD)
+        <input type="number" id="salePrice" class="border rounded w-full p-2"
+               placeholder="例：49.99" required>
+      </label>
+      <label class="block mb-2">采购成本 (USD)
+        <input type="number" id="costPrice" class="border rounded w-full p-2"
+               placeholder="例：15" required>
+      </label>
+      <label class="block mb-2">重量 (kg)
+        <input type="number" step="0.01" id="weight" class="border rounded w-full p-2"
+               placeholder="例：0.45" required>
+      </label>
+      <label class="block mb-2">尺寸 (cm)
+        <input type="text" id="size" class="border rounded w-full p-2"
+               placeholder="长×宽×高，例：25×20×15">
+      </label>
 
+      <!-- 运费方式 -->
+      <h2 class="text-lg font-semibold mt-4 mb-2">运费方式</h2>
+      <div class="flex items-center mb-2">
+        <label class="mr-4"><input type="radio" name="transport" value="fba" checked> FBA（Amazon 物流）</label>
+        <label><input type="radio" name="transport" value="fbm"> FBM（自发货）</label>
+      </div>
+
+      <!-- 物流公司（仅 FBM 时显示） -->
+      <div id="carrierSection" class="hidden mb-2">
+        <label class="block mb-2">物流公司
+          <select id="carrier" class="border rounded w-full p-2">
+            <option value="DHL">DHL</option>
+            <option value="UPS">UPS</option>
+            <option value="FedEx">FedEx</option>
+            <option value="SF">顺丰速运</option>
+            <option value="EMS">EMS</option>
+          </select>
+        </label>
+        <p class="note" id="carrierNote"></p>
+      </div>
+
+      <button id="calcBtn"
+              class="mt-4 w
