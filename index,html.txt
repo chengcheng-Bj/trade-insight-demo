@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>国际贸易获利计算器</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .result-card { @apply bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md; }
+  .result-card p { @apply text-sm text-blue-800; }
+  .note { @apply text-sm text-gray-600 mt-2; }
+  .disclaimer { @apply text-xs text-red-600 mt-4; }
+</style>
+</head>
+<body class="bg-gray-100">
+
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-8">
+  <h1 class="text-2xl font-bold text-gray-800 mb-2">国际贸易获利计算器</h1>
+  <p class="text-gray-600 mb-4">
+    <strong>说明：</strong>所有费用、汇率均为公开均值，仅供参考。实际费用以您所选物流公司报价为准。<br>
+    汇率来源：<a href="https://exchangerate.host" target="_blank" class="underline text-blue-600">exchangerate.host</a>
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- 左侧：业务参数 -->
+    <div>
+      <h2 class="text-lg font-semibold mb-3">业务参数</h2>
+      <label class="block mb-2">销售价 (USD)<input type="number" id="salePrice" class="border rounded w-full p-2" placeholder="例：49.99" required></label>
+      <label class="block mb-2">采购成本 (USD)...  
+
