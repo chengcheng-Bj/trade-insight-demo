@@ -1,59 +1,180 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>国际贸易获利计算器</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- 采用官方 Tailwind CDN，省去本地构建 -->
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-  /* 手动写的简易 CSS，等价于 Tailwind @apply */
-  .result-card {
-    background-color: #eff6ff;      /* bg-blue-50 */
-    border-left: 4px solid #3b82f6; /* border-blue-500 */
-    padding: 1rem;
-    border-radius: 0.5rem;
-  }
-  .result-card p { font-size: 0....  
-html
-      <h2 class="text-lg font-semibold mb-3">业务参数</h2>
-      <label class="block mb-2">销售价 (USD)
-        <input type="number" id="salePrice" class="border rounded w-full p-2"
-               placeholder="例：49.99" required>
-      </label>
-      <label class="block mb-2">采购成本 (USD)
-        <input type="number" id="costPrice" class="border rounded w-full p-2"
-               placeholder="例：15" required>
-      </label>
-      <label class="block mb-2">重量 (kg)
-        <input type="number" step="0.01" id="weight" class="border rounded w-full p-2"
-               placeholder="例：0.45" required>
-      </label>
-      <label class="block mb-2">尺寸 (cm)
-        <input type="text" id="size" class="border rounded w-full p-2"
-               placeholder="长×宽×高，例：25×20×15">
-      </label>
+  <meta charset="UTF-8">
+  <title>International Trade Profit Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col items-center p-4">
 
-      <!-- 运费方式 -->
-      <h2 class="text-lg font-semibold mt-4 mb-2">运费方式</h2>
-      <div class="flex items-center mb-2">
-        <label class="mr-4"><input type="radio" name="transport" value="fba" checked> FBA（Amazon 物流）</label>
-        <label><input type="radio" name="transport" value="fbm"> FBM（自发货）</label>
+  <header class="w-full max-w-3xl mb-6 text-center">
+    <h1 class="text-3xl font-bold text-gray-800">International Trade Profit Calculator</h1>
+    <p class="text-gray-600 mt-2">Estimate your profit after costs, fees and currency conversion.</p>
+  </header>
+
+  <!-- Calculator Form -->
+  <section class="w-full max-w-3xl bg-white rounded-lg shadow-md p-6">
+    <form id="calcForm" class="grid gap-4 md:grid-cols-2">
+
+      <!-- Selling Price (USD) -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Selling Price (USD)</label>
+        <input type="number" step="0.01" min="0" id="sellingPrice" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
       </div>
 
-      <!-- 物流公司（仅 FBM 时显示） -->
-      <div id="carrierSection" class="hidden mb-2">
-        <label class="block mb-2">物流公司
-          <select id="carrier" class="border rounded w-full p-2">
-            <option value="DHL">DHL</option>
-            <option value="UPS">UPS</option>
-            <option value="FedEx">FedEx</option>
-            <option value="SF">顺丰速运</option>
-            <option value="EMS">EMS</option>
-          </select>
-        </label>
-        <p class="note" id="carrierNote"></p>
+      <!-- Cost of Goods (USD) -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Cost of Goods (USD)</label>
+        <input type="number" step="0.01" min="0" id="cog" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="e.g., 15" required>
       </div>
 
-      <button id="calcBtn"
-              class="mt-4 w
+      <!-- Shipping Cost (USD) -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Shipping Cost (USD)</label>
+        <input type="number" step="0.01" min="0" id="shipping" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+      </div>
+
+      <!-- Customs Duty (%) -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Customs Duty (%)</label>
+        <input type="number" step="0.01" min="0" id="dutyPct" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="e.g., 5">
+      </div>
+
+      <!-- Sales Channel -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Sales Channel</label>
+        <select id="channel" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          <option value="FBA">FBA (Fulfilled by Amazon)</option>
+          <option value="FBM">FBM (Fulfilled by Merchant)</option>
+        </select>
+      </div>
+
+      <!-- FBA Fee (%) – shown only when FBA selected -->
+      <div id="fbaFeeContainer">
+        <label class="block text-sm font-medium text-gray-700">FBA Fee (%)</label>
+        <input type="number" step="0.01" min="0" id="fbaFeePct" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="e.g., 15">
+      </div>
+
+      <!-- FBM Customer Shipping Fee (USD) – shown only when FBM selected -->
+      <div id="fbmFeeContainer" class="hidden">
+        <label class="block text-sm font-medium text-gray-700">FBM Customer Shipping (USD)</label>
+        <input type="number" step="0.01" min="0" id="fbmShipping" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="e.g., 4.99">
+      </div>
+
+      <!-- Logistics Carrier -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Logistics Carrier</label>
+        <select id="carrier" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          <option value="">-- Select Carrier --</option>
+          <option value="UPS">UPS</option>
+          <option value="FedEx">FedEx</option>
+          <option value="DHL">DHL</option>
+        </select>
+      </div>
+
+      <!-- Target Currency -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Convert Profit To</label>
+        <select id="targetCurrency" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          <option value="USD">USD (no conversion)</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="CAD">CAD</option>
+          <option value="AUD">AUD</option>
+          <option value="JPY">JPY</option>
+        </select>
+      </div>
+
+      <!-- Calculate Button -->
+      <div class="md:col-span-2 flex justify-end">
+        <button type="submit"
+                class="px-6 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          Calculate
+        </button>
+      </div>
+    </form>
+
+    <!-- Carrier Note -->
+    <div id="carrierNote" class="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 text-sm text-gray-800 hidden"></div>
+
+    <!-- Result Section -->
+    <div id="result" class="mt-6 hidden">
+      <h2 class="text-xl font-semibold text-gray-800 mb-2">Result</h2>
+      <div class="grid gap-2 md:grid-cols-2">
+        <p><strong>Total Cost (USD):</strong> <span id="totalCostUsd" class="text-gray-700"></span></p>
+        <p><strong>Profit (USD):</strong> <span id="profitUsd" class="text-green-700 font-medium"></span></p>
+        <p class="md:col-span-2"><strong>Profit in <span id="currencyLabel"></span>:</strong> <span id="profitConverted" class="text-green-700 font-medium"></span></p>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <p class="mt-6 text-xs text-gray-500">
+      Disclaimer: This calculator provides estimates only. Actual costs may vary due to taxes, duties, carrier surcharges, and exchange‑rate fluctuations. Use it as a guide, not as financial advice.
+    </p>
+  </section>
+
+  <script>
+    // Global state
+    const exchange = { USD: 1 };
+    const carrierNotes = {
+      UPS: "UPS 提供可靠的门到门服务，关税处理通常包含在运费中。",
+      FedEx: "FedEx 速度快，适合紧急发货，但重量较大的包裹可能费用偏高。",
+      DHL: "DHL 在亚洲和欧洲网络最为完善，适合国际小批量货物。"
+    };
+    const getNum = id => parseFloat(document.getElementById(id).value) || 0;
+    const show = el => el.classList.remove('hidden');
+    const hide = el => el.classList.add('hidden');
+    async function loadRates() {
+      try {
+        const symbols = "EUR,GBP,CAD,AUD,JPY";
+        const resp = await fetch(`https://api.exchangerate.host/latest?base=USD&symbols=${symbols}`);
+        const data = await resp.json();
+        if (data && data.rates) Object.assign(exchange, data.rates);
+      } catch (e) {
+        console.warn('Failed to fetch rates', e);
+      }
+    }
+    document.getElementById('channel').addEventListener('change', e => {
+      const isFBA = e.target.value === 'FBA';
+      if (isFBA) { show(document.getElementById('fbaFeeContainer')); hide(document.getElementById('fbmFeeContainer')); }
+      else { hide(document.getElementById('fbaFeeContainer')); show(document.getElementById('fbmFeeContainer')); }
+    });
+    document.getElementById('carrier').addEventListener('change', e => {
+      const note = carrierNotes[e.target.value] || '';
+      const el = document.getElementById('carrierNote');
+      if (note) { el.textContent = note; show(el); } else hide(el);
+    });
+    document.getElementById('calcForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      await loadRates();
+      const sellingPrice = getNum('sellingPrice');
+      const cost = getNum('cog');
+      const shipping = getNum('shipping');
+      const dutyPct = getNum('dutyPct');
+      const channel = document.getElementById('channel').value;
+      const targetCurr = document.getElementById('targetCurrency').value;
+      const dutyAmt = cost * (dutyPct / 100);
+      let channelFee = 0;
+      if (channel === 'FBA') {
+        const fbaPct = getNum('fbaFeePct');
+        channelFee = sellingPrice * (fbaPct / 100);
+      } else {
+        channelFee = getNum('fbmShipping');
+      }
+      const totalCostUsd = cost + shipping + dutyAmt + channelFee;
+      const profitUsd = sellingPrice - totalCostUsd;
+      const rate = exchange[targetCurr] || 1;
+      const profitConverted = profitUsd * rate;
+      document.getElementById('totalCostUsd').textContent = `$${totalCostUsd.toFixed(2)}`;
+      document.getElementById('profitUsd').textContent = `$${profitUsd.toFixed(2)}`;
+      document.getElementById('currencyLabel').textContent = targetCurr;
+      const symbol = targetCurr === 'USD' ? '$' : targetCurr === 'EUR' ? '€' : targetCurr === 'GBP' ? '£' : targetCurr === 'CAD' ? 'C$' : targetCurr === 'AUD' ? 'A$' : targetCurr === 'JPY' ? '¥' : '';
+      document.getElementById('profitConverted').textContent = `${symbol}${profitConverted.toFixed(2)}`;
+      show(document.getElementById('result'));
+    });
+    (async () => { await loadRates(); document.getElementById('channel').dispatchEvent(new Event('change')); })();
+  </script>
+</body>
+</html>
