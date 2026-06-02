@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>国际贸易获利计算器</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .result-card{background:#eff6ff;border-left:4px solid #3b82f6;padding:1rem;border-radius:.5rem}
+  .note{font-size:.875rem;color:#4b5563;margin-top:.5rem}
+  .disclaimer{font-size:.75rem;color:#dc2626;margin-top:1rem}
+</style>
+</head>
+<body class="bg-gray-100">
+
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-8">
+  <h1 class="text-2xl font-bold text-gray-800 mb-2">国际贸易获利计算器</h1>
+  <p class="text-gray-600 mb-4">
+    <strong>说明：</strong>所有费用、汇率均为公开均值，仅供参考。实际费用以您所选物流公司报价为准。<br>
+    汇率来源：<a href="https://exchangerate.host" target="_blank" class="underline text-blue-600">exchangerate.host</a>
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- 左侧：业务参数 -->
+    <div>
+      <h2 class="text-lg font-semibold mb-3">业务参数</h2>
+      <label class="block mb-2">销售价 (USD)
+        <input type="number" id="salePrice" class="border rounded w-full p-2"
+               placeholder="例：49.99" required>
+      </label>
+      <label class="block mb-2">采购成本 (USD)
+        <input type="number" id="costPrice" class="border rounded w-full p-2"
+               placeholder="例：15" required>
+      </label>
+      <label class="block mb-2">重量 (kg)
+        <input type="number" step="0.01" id="weight" class="border rounded w-full p-2"
+               placeholder="例：0.45" required>
+      </label>
+      <label class="block mb-2">尺寸 (cm)
+        <input type="text" id="size" class="border rounded w-full p-2"
+               placeholder="长×宽×高，例：25×20×15">
+      </label>
+
+      <!-- 运费方式 -->
+      <h2 class="text-lg font-semibold mt-4 mb-2">运费方式</h2>
+      <div class="flex items-center mb-2">
+        <label class="mr-4"><input type="radio" name="transport" value="fba" checked> FBA（Amazon 物流）</label>
+        <label><input type="radio" name="transport" value="fbm"> FBM
